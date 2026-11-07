@@ -3,6 +3,7 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/toast";
 
 const labelClassName =
   "mb-0.5 block text-[8px] leading-3 font-medium text-[#37453c] dark:text-[#d8e2d8]";
@@ -39,7 +40,6 @@ function getLocalDateString() {
 export default function CreateEventPage() {
   // This state object always contains the latest values from the form fields.
   const [formData, setFormData] = useState(initialFormData);
-  const [feedback, setFeedback] = useState("");
 
   function handleChange(
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -55,11 +55,24 @@ export default function CreateEventPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    //  console.log('after submit', formData);
+
+    // Validate required fields and input types before sending the request.
+    if (!event.currentTarget.reportValidity()) {
+      toast.add({
+        title: "Check the event details",
+        description: "Complete all required fields with valid information.",
+        type: "error",
+      });
+      return;
+    }
 
     // Only send the form to the server if the selected date is in the future.
     if (formData.eventDate <= getLocalDateString()) {
-      setFeedback("Choose a future date for your event.");
+      toast.add({
+        title: "Choose a future date",
+        description: "The event date must be later than today.",
+        type: "error",
+      });
       return;
     }
 
@@ -76,16 +89,23 @@ export default function CreateEventPage() {
         throw new Error(`Event request failed with status ${response.status}`);
       }
 
-      setFeedback("Your event was published.");
+      toast.add({
+        title: "Event created",
+        description: "Your event was sent to the server successfully.",
+        type: "success",
+      });
     } catch (error) {
       console.error("Could not publish event:", error);
-      setFeedback("Could not publish your event. Check that the event server is running.");
+      toast.add({
+        title: "Could not create event",
+        description: "Check that the event server is running, then try again.",
+        type: "error",
+      });
     }
   }
 
   function handleCancel() {
     setFormData(initialFormData);
-    setFeedback("");
   }
 
   return (
@@ -104,6 +124,7 @@ export default function CreateEventPage() {
         <div className="mt-1 grid items-start gap-4 sm:grid-cols-[2fr_1fr]">
           <form
             onSubmit={handleSubmit}
+            noValidate
             className="space-y-2 bg-white p-4 dark:bg-[#1b2d26] sm:p-4"
           >
             <div>
@@ -234,15 +255,6 @@ export default function CreateEventPage() {
               </Button>
             </div>
 
-            {feedback && (
-              <p
-                aria-live="polite"
-                className="text-[11px] leading-4 text-[#526b59] dark:text-[#c2d5c2]"
-                role="status"
-              >
-                {feedback}
-              </p>
-            )}
           </form>
 
           <aside className="bg-[#eaf0e7] p-3.5 text-[#284b3c] dark:bg-[#20382d] dark:text-[#e3eee1]">
