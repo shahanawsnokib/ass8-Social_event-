@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "meetcute. — Find your kind of people",
-  description: "Good plans start with good people. Find your next favorite event with meetcute.",
+  title: "Goodturn — Neighbors in action",
+  description: "Find and join local community-service events. Small acts make stronger neighborhoods.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

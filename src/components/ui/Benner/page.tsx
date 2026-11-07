@@ -1,157 +1,181 @@
 import Link from "next/link";
 import {
-  ArrowRight,
+  ArrowDown,
+  ArrowUpRight,
   CalendarDays,
+  HandHeart,
   MapPin,
-  Sparkles,
-  UsersRound,
+  Sprout,
 } from "lucide-react";
 
-const attendeeColors = ["bg-[#f1a987]", "bg-[#9a91f4]", "bg-[#a7c98b]", "bg-[#f2cf74]"];
+const sampleEvents = [
+  {
+    category: "WINTER CARE",
+    title: "Winter clothes distribution",
+    location: "Mirpur 10, Dhaka",
+    tone: "bg-[#f3e4cb]",
+    icon: HandHeart,
+  },
+  {
+    category: "WARMTH DRIVE",
+    title: "Blanket distribution",
+    location: "Mohammadpur, Dhaka",
+    tone: "bg-[#e4e8d8]",
+    icon: Sprout,
+  },
+];
 
 export default function Banner() {
   return (
     <section
       id="discover"
       aria-labelledby="banner-title"
-      className="relative isolate overflow-hidden bg-[#f5f3ec] px-5 pb-20 pt-14 text-[#171820] sm:px-8 sm:pb-24 sm:pt-20 lg:px-12 lg:pt-24"
+      className="relative isolate overflow-hidden bg-[#f4f0e6] px-5 pb-16 pt-14 text-[#193b32] sm:px-8 sm:pb-20 sm:pt-20 lg:px-12 lg:pt-24"
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-28 top-10 -z-10 size-[30rem] rounded-full bg-[#d8ff75]/40 blur-[100px]"
+        className="pointer-events-none absolute -right-28 -top-28 -z-10 size-[34rem] rounded-full bg-[#e5d9b8]/45 blur-[90px]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-40 bottom-[-13rem] -z-10 size-[28rem] rounded-full bg-[#d9d5ff]/55 blur-[100px]"
+        className="pointer-events-none absolute -bottom-52 -left-40 -z-10 size-[32rem] rounded-full bg-[#d8e1cd]/60 blur-[100px]"
       />
 
-      <div className="mx-auto grid max-w-[1320px] items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
+      <div className="mx-auto grid max-w-[1320px] items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-8">
         <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#171820]/10 bg-white/70 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#575861] shadow-sm shadow-[#171820]/[0.03]">
-            <Sparkles aria-hidden="true" className="size-3.5 text-[#7279e8]" />
-            Find your kind of people
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-[#193b32]/15 bg-[#fffdf7]/75 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#52675d] shadow-sm shadow-[#193b32]/[0.04]">
+            <span className="size-2 rounded-full bg-[#dd704b]" />
+            Dhaka community calendar
           </div>
 
           <h1
             id="banner-title"
-            className="mt-7 max-w-[760px] text-[clamp(3.25rem,7.8vw,6.8rem)] font-semibold leading-[0.92] tracking-[-0.085em]"
+            className="mt-7 max-w-[760px] text-[clamp(3.3rem,7.6vw,6.7rem)] font-semibold leading-[0.92] tracking-[-0.085em]"
           >
-            Your next favorite
+            Small acts.
             <span className="relative mt-1 block w-fit">
-              story starts here.
+              Stronger neighborhoods.
               <span
                 aria-hidden="true"
-                className="absolute -bottom-1 left-1 -z-10 h-[0.16em] w-[96%] -rotate-2 rounded-full bg-[#d8ff75] sm:-bottom-2"
+                className="absolute -bottom-1 left-1 -z-10 h-[0.16em] w-[97%] -rotate-2 rounded-full bg-[#e89a69] sm:-bottom-2"
               />
             </span>
           </h1>
 
-          <p className="mt-7 max-w-lg text-base leading-7 text-[#686971] sm:text-lg sm:leading-8">
-            Meet good people around the things you love. Find a small plan nearby, show up as you are, and let the night surprise you.
+          <p id="mission" className="mt-7 max-w-xl text-base leading-7 text-[#5f6c64] sm:text-lg sm:leading-8">
+            Find hands-on ways to care for your community. Join a local drive, lend a few hours, and meet the neighbors making good things happen.
           </p>
 
           <div className="mt-9 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-center">
             <Link
-              href="/#experiences"
-              className="group inline-flex h-14 items-center justify-center gap-3 rounded-full bg-[#171820] px-6 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#7279e8]"
+              href="/events"
+              className="group inline-flex h-14 items-center justify-center gap-3 rounded-full bg-[#193b32] px-6 text-sm font-semibold text-[#fffaf0] shadow-[0_12px_30px_-18px_rgba(25,59,50,0.7)] transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#dd704b]"
             >
-              Find your next thing
-              <ArrowRight aria-hidden="true" className="size-4 text-[#d8ff75] transition-transform group-hover:translate-x-1" />
+              Explore upcoming events
+              <ArrowUpRight aria-hidden="true" className="size-4 text-[#f0a36e] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
             <Link
-              href="/#hosts"
-              className="inline-flex h-14 items-center justify-center rounded-full px-5 text-sm font-semibold text-[#34353c] transition-colors hover:bg-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7279e8]"
+              href="/events/create"
+              className="inline-flex h-14 items-center justify-center rounded-full px-5 text-sm font-semibold text-[#314c40] transition-colors hover:bg-white/65 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dd704b]"
             >
-              I&apos;d like to host
+              Organize a drive
             </Link>
           </div>
 
-          <div className="mt-9 flex items-center gap-3">
-            <div className="flex -space-x-2" aria-hidden="true">
-              {attendeeColors.slice(0, 3).map((color, index) => (
-                <span
-                  key={color}
-                  className={`flex size-8 items-center justify-center rounded-full border-2 border-[#f5f3ec] ${color} text-[9px] font-bold text-[#171820]`}
-                >
-                  {index === 0 ? "J" : index === 1 ? "M" : "A"}
-                </span>
-              ))}
-            </div>
-            <p className="text-xs font-medium text-[#686971]">
-              <span className="font-semibold text-[#171820]">Your people are out there.</span> Go find them.
-            </p>
+          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-[#193b32]/15 pt-5 text-xs font-medium text-[#657168]">
+            <span className="inline-flex items-center gap-2">
+              <MapPin aria-hidden="true" className="size-3.5 text-[#dd704b]" />
+              Local to your neighborhood
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <CalendarDays aria-hidden="true" className="size-3.5 text-[#dd704b]" />
+              Made for showing up
+            </span>
           </div>
         </div>
 
-        <div className="relative mx-auto flex aspect-square w-full max-w-[560px] items-center justify-center lg:ml-auto">
+        <div className="relative mx-auto flex min-h-[420px] w-full max-w-[590px] items-center justify-center sm:min-h-[520px] lg:ml-auto">
           <div
             aria-hidden="true"
-            className="absolute inset-[5%] rounded-full border border-dashed border-[#171820]/15"
+            className="absolute left-1/2 top-1/2 aspect-square w-[88%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[#193b32]/20"
           />
           <div
             aria-hidden="true"
-            className="absolute inset-[17%] rounded-full border border-[#171820]/[0.08]"
+            className="absolute left-1/2 top-1/2 aspect-square w-[68%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#193b32]/10"
           />
-          <div
-            aria-hidden="true"
-            className="absolute left-[9%] top-[18%] size-3 rounded-full bg-[#7279e8] shadow-[0_0_0_7px_rgba(114,121,232,0.12)]"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute bottom-[15%] right-[16%] size-4 rounded-full bg-[#f1a987] shadow-[0_0_0_8px_rgba(241,169,135,0.18)]"
-          />
+          <div aria-hidden="true" className="absolute left-[8%] top-[23%] size-3 rounded-full bg-[#dd704b] shadow-[0_0_0_7px_rgba(221,112,75,0.12)]" />
+          <div aria-hidden="true" className="absolute bottom-[16%] right-[13%] size-4 rounded-full bg-[#8b9a6b] shadow-[0_0_0_8px_rgba(139,154,107,0.15)]" />
 
-          <article className="relative z-10 w-[76%] max-w-[390px] rotate-[-3deg] rounded-[30px] border border-white/70 bg-white p-5 shadow-[0_35px_90px_-36px_rgba(23,24,32,0.3)] transition-transform duration-500 hover:rotate-0 sm:rounded-[36px] sm:p-7">
-            <div className="relative flex h-48 flex-col justify-between overflow-hidden rounded-[22px] bg-[#dad7ff] p-5 sm:h-56 sm:rounded-[28px] sm:p-6">
-              <div aria-hidden="true" className="absolute -right-7 -top-12 size-48 rounded-full border-[18px] border-[#f3b092]" />
-              <div aria-hidden="true" className="absolute -bottom-20 -left-9 size-48 rounded-full bg-[#d8ff75]" />
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="rounded-full bg-white/70 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#34353c]">
-                  8 spots left
-                </span>
-                <Sparkles aria-hidden="true" className="size-5 text-[#171820]" />
-              </div>
-              <p className="relative z-10 max-w-[210px] text-3xl font-semibold leading-[0.95] tracking-[-0.07em] sm:text-4xl">
-                Supper club<br />under the stars
-              </p>
-            </div>
-
-            <div className="px-1 pb-1 pt-5 sm:px-2 sm:pt-6">
-              <div className="flex items-center gap-2 text-[11px] font-medium text-[#686971]">
-                <CalendarDays aria-hidden="true" className="size-3.5 text-[#7279e8]" />
-                Friday, 7:30 PM
-                <span aria-hidden="true" className="mx-1 size-1 rounded-full bg-[#c4c3c9]" />
-                <MapPin aria-hidden="true" className="size-3.5 text-[#7279e8]" />
-                Brooklyn
-              </div>
-              <div className="mt-5 flex items-center justify-between border-t border-[#171820]/[0.08] pt-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex -space-x-2" aria-hidden="true">
-                    {attendeeColors.map((color, index) => (
-                      <span
-                        key={color}
-                        className={`size-7 rounded-full border-2 border-white ${color}`}
-                        style={{ zIndex: attendeeColors.length - index }}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-[11px] font-medium text-[#686971]">+ 12 going</span>
-                </div>
-                <span className="flex size-10 items-center justify-center rounded-full bg-[#171820] text-white">
-                  <UsersRound aria-hidden="true" className="size-4" />
-                </span>
-              </div>
-            </div>
-          </article>
-
-          <div className="absolute bottom-[10%] left-[2%] z-20 hidden -rotate-6 items-center gap-2 rounded-full border border-white/80 bg-[#d8ff75] px-4 py-3 text-xs font-semibold text-[#171820] shadow-lg shadow-[#171820]/10 sm:flex">
-            <Sparkles aria-hidden="true" className="size-3.5" />
-            Make a little memory
+          <div className="absolute right-[4%] top-[7%] z-20 hidden -rotate-6 items-center gap-2 rounded-full border border-[#193b32]/10 bg-[#fffdf7] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#52675d] shadow-lg shadow-[#193b32]/10 sm:flex">
+            <span className="flex size-6 items-center justify-center rounded-full bg-[#e4e8d8] text-[#193b32]">
+              <HandHeart aria-hidden="true" className="size-3.5" />
+            </span>
+            Neighbors helping neighbors
           </div>
-          <div className="absolute right-[1%] top-[14%] z-20 hidden rotate-6 rounded-full border border-white/80 bg-white px-4 py-3 text-xs font-semibold text-[#171820] shadow-lg shadow-[#171820]/10 sm:block">
-            Good energy only ✳
+
+          <div className="relative z-10 w-[84%] max-w-[420px] rotate-[-3deg] rounded-[28px] border border-[#193b32]/10 bg-[#fffdf7] p-4 shadow-[0_35px_90px_-38px_rgba(25,59,50,0.32)] transition-transform duration-500 hover:rotate-0 sm:rounded-[34px] sm:p-6">
+            <div className="flex items-center justify-between border-b border-[#193b32]/10 px-1 pb-4">
+              <div>
+                <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-[#8a735d]">The neighborhood edit</p>
+                <p className="mt-1 text-sm font-semibold tracking-[-0.03em]">Good turns, close to home</p>
+              </div>
+              <div className="flex size-9 items-center justify-center rounded-full bg-[#193b32] text-[#f0a36e]">
+                <HandHeart aria-hidden="true" className="size-[18px]" />
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-4">
+              {sampleEvents.map((event, index) => {
+                const EventIcon = event.icon;
+
+                return (
+                  <article
+                    key={event.title}
+                    className={`relative overflow-hidden rounded-[20px] ${event.tone} p-4 sm:rounded-[24px] sm:p-5`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#52675d]">
+                          {event.category}
+                        </p>
+                        <h2 className="mt-2 max-w-[220px] text-lg font-semibold leading-[1.05] tracking-[-0.045em] sm:text-[21px]">
+                          {event.title}
+                        </h2>
+                        <p className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-medium text-[#52675d]">
+                          <MapPin aria-hidden="true" className="size-3 text-[#dd704b]" />
+                          {event.location}
+                        </p>
+                      </div>
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#fffdf7]/75 text-[#193b32]">
+                        <EventIcon aria-hidden="true" className="size-[18px]" />
+                      </span>
+                    </div>
+                    <span className="absolute -bottom-8 -right-5 text-7xl font-semibold leading-none tracking-[-0.1em] text-[#193b32]/[0.06]">
+                      0{index + 1}
+                    </span>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 flex items-center justify-between px-1 text-[10px] font-medium text-[#667168]">
+              <span>One neighborhood at a time.</span>
+              <span className="inline-flex items-center gap-1.5 text-[#193b32]">
+                Be part of it <ArrowDown aria-hidden="true" className="size-3 -rotate-45" />
+              </span>
+            </div>
+          </div>
+
+          <div className="absolute bottom-[7%] left-[2%] z-20 hidden -rotate-6 items-center gap-2 rounded-full border border-[#193b32]/10 bg-[#e4e8d8] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#314c40] shadow-lg shadow-[#193b32]/10 sm:flex">
+            <Sprout aria-hidden="true" className="size-3.5" />
+            Small acts add up
           </div>
         </div>
+      </div>
+
+      <div className="mx-auto mt-12 flex max-w-[1320px] items-center justify-between border-t border-[#193b32]/15 pt-4 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#778078] sm:mt-14">
+        <span>Community is a verb.</span>
+        <span>Goodturn · Dhaka</span>
       </div>
     </section>
   );

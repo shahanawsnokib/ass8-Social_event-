@@ -8,6 +8,11 @@
 - `components.json` sets aliases `@/components`, `@/lib`, `@/hooks`. `cn` is re-exported from `src/lib/utils.ts` (it wraps the npm package `cn`, not `clsx`/`tailwind-merge`).
 - Tailwind 4 is CSS-first: theme tokens are defined in `src/app/globals.css` (`@theme inline`, oklch CSS variables, dark mode via `.dark` class). There is no `tailwind.config` file.
 
+## Assignment requirements
+
+- Read `PROJECT_PLAN.md` before implementing product features. It summarizes the owner's assignment brief and is the reference for the app's goals, routes, authentication, event workflows, security, and submission requirements.
+- Keep the experience focused on local community-service events and social development; do not replace this direction with a generic event marketplace.
+
 ## Gotchas
 
 - `src/app/nabBer/page.tsx` is a 0-byte placeholder with no default export; `next build` fails until it has one. The home page (`src/app/page.tsx`) is currently an empty fragment — start work there.
