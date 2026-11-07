@@ -83,12 +83,6 @@ export async function getCommunityEvents(): Promise<CommunityEvent[]> {
     .filter((event): event is CommunityEvent => event !== null);
 }
 
-export async function getCommunityEventById(id: string) {
-  const events = await getCommunityEvents();
-
-  return events.find((event) => event.id === id) ?? null;
-}
-
 export function getEventDateLabel(date: string) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
 
