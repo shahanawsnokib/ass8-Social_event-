@@ -5,6 +5,7 @@ import {
   type CommunityEvent,
 } from "@/lib/community-events";
 import { notFound } from "next/navigation";
+import EditEventDetails from "@/components/ui/editEvenetDetails";
 import EventDetailImage from "@/components/ui/events/event-detail-image";
 
 type EventDetailsPageProps = {
@@ -170,6 +171,10 @@ export default async function EventDetailsPage({
                 <MapPin aria-hidden="true" className="size-4 shrink-0" />
                 {event.location}
               </p>
+            </div>
+
+            <div className="relative z-10 my-5 mx-4 flex justify-between">
+              <EditEventDetails event={event} />
             </div>
           </div>
 
