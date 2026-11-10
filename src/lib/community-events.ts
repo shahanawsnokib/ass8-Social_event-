@@ -9,7 +9,12 @@ export type CommunityEvent = {
   organizerEmail: string;
 };
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000")
+  .replace(/\/+$/, "");
+
+export function getCommunityEventUrl(id: string) {
+  return `${apiUrl}/events/${encodeURIComponent(id)}`;
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;

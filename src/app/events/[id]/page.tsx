@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, CalendarDays, Mail, MapPin } from "lucide-react";
 import {
+  getCommunityEventUrl,
   getEventDateLabel,
   type CommunityEvent,
 } from "@/lib/community-events";
@@ -42,9 +43,11 @@ function normalizeEvent(value: unknown): CommunityEvent | null {
     id,
     title: typeof value.title === "string" ? value.title : "Community event",
     description: typeof value.description === "string" ? value.description : "",
-    eventType: typeof value.eventType === "string" ? value.eventType : "Community",
+    eventType:
+      typeof value.eventType === "string" ? value.eventType : "Community",
     eventDate: typeof value.eventDate === "string" ? value.eventDate : "",
-    thumbnailUrl: typeof value.thumbnailUrl === "string" ? value.thumbnailUrl : "",
+    thumbnailUrl:
+      typeof value.thumbnailUrl === "string" ? value.thumbnailUrl : "",
     location:
       typeof value.location === "string"
         ? value.location
@@ -68,16 +71,17 @@ export default async function EventDetailsPage({
 
   try {
     // Send the request from the server directly to the API's event-by-ID route.
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? `http://localhost:5000/events/${id}`;
-    const response = await fetch(
-      `${apiUrl}`,
-      { cache: "no-store" },
-    );
+    const response = await fetch(getCommunityEventUrl(id), {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" },
+    });
 
     // A 404 means the ID was valid but the API did not find that event.
     // Other unsuccessful responses are treated as errors and shown below.
     if (response.status !== 404 && !response.ok) {
-      throw new Error(`Could not load event details (HTTP ${response.status}).`);
+      throw new Error(
+        `Could not load event details (HTTP ${response.status}).`,
+      );
     }
 
     if (response.ok) {
@@ -118,7 +122,7 @@ export default async function EventDetailsPage({
       <main className="flex flex-1 items-center bg-[#f7f8f1] px-5 py-16 text-[#193b32] dark:bg-[#14241f] dark:text-[#f8f8ef] sm:px-8">
         <div className="mx-auto w-full max-w-3xl rounded-3xl bg-white p-8 shadow-sm dark:bg-[#1b2d26] sm:p-12">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#52735e] dark:text-[#a9c5ad]">
-            Event details
+            Event details..............
           </p>
           <h1 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
             We couldn&apos;t load this event
@@ -159,10 +163,10 @@ export default async function EventDetailsPage({
         <section className="mt-6 overflow-hidden rounded-3xl bg-white shadow-[0_16px_50px_-28px_rgba(25,59,50,0.3)] ring-1 ring-[#193b32]/[0.07] dark:bg-[#1b2d26] dark:ring-white/10">
           <div className="relative min-h-[300px] overflow-hidden bg-gradient-to-br from-[#315d49] via-[#78956e] to-[#d1bd8b] sm:min-h-[420px]">
             <EventDetailImage src={event.thumbnailUrl} />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#102c22]/90 via-[#102c22]/25 to-[#102c22]/5" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#102c22]/90 via-[#102c22]/25 to-[#102c22]/5" />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
               <span className="inline-flex rounded-full border border-white/30 bg-[#fffdf7]/95 px-3 py-1 text-xs font-semibold text-[#28513f] shadow-sm">
-                {event.eventType}
+                {event.eventType} ......
               </span>
               <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.05em] text-white sm:text-5xl">
                 {event.title}
@@ -174,7 +178,18 @@ export default async function EventDetailsPage({
             </div>
 
             <div className="relative z-10 my-5 mx-4 flex justify-between">
+              {/* Edit Event */}
               <EditEventDetails event={event} />
+
+              {/* Delete Event
+  <DeleteEventButton id={event.id} /> */}
+
+              <Link
+                href={`/events/${event.id}/edit`}
+                className="rounded-lg bg-red-400 hover:bg-red-600 px-5 py-3 text-center font-medium text-white"
+              >
+                Delete
+              </Link>
             </div>
           </div>
 
@@ -191,8 +206,19 @@ export default async function EventDetailsPage({
                 About this event
               </h2>
               <p className="mt-4 whitespace-pre-line text-sm leading-7 text-[#65736a] dark:text-[#c0cdc2]">
-                {event.description || "More information about this event will be shared soon."}
+                {event.description ||
+                  "More information about this event will be shared soon."}
               </p>
+
+              <div className="mx-auto my-6 flex max-w-lg flex-col gap-3 sm:flex-row">
+                {/* Join Now */}
+                <Link
+                  href={`/events/${event.id}/join`}
+                  className="rounded-lg bg-green-800 px-5 py-3 text-center font-medium text-white hover:bg-green-900"
+                >
+                  Join Now
+                </Link>
+              </div>
             </section>
 
             <aside
@@ -224,7 +250,9 @@ export default async function EventDetailsPage({
                     <dt className="text-xs text-[#718078] dark:text-[#aebdb1]">
                       Location
                     </dt>
-                    <dd className="mt-1 text-sm font-medium">{event.location}</dd>
+                    <dd className="mt-1 text-sm font-medium">
+                      {event.location}
+                    </dd>
                   </div>
                 </div>
                 {event.organizerEmail && (
