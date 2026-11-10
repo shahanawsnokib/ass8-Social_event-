@@ -8,6 +8,7 @@ import {
 import { notFound } from "next/navigation";
 import EditEventDetails from "@/components/ui/editEvenetDetails";
 import EventDetailImage from "@/components/ui/events/event-detail-image";
+import DeleteEventButton from "@/components/ui/delete_event";
 
 type EventDetailsPageProps = {
   // Next.js gives this page the value from the [id] part of the URL.
@@ -181,15 +182,7 @@ export default async function EventDetailsPage({
               {/* Edit Event */}
               <EditEventDetails event={event} />
 
-              {/* Delete Event
-  <DeleteEventButton id={event.id} /> */}
-
-              <Link
-                href={`/events/${event.id}/edit`}
-                className="rounded-lg bg-red-400 hover:bg-red-600 px-5 py-3 text-center font-medium text-white"
-              >
-                Delete
-              </Link>
+              <DeleteEventButton event={event} />
             </div>
           </div>
 
