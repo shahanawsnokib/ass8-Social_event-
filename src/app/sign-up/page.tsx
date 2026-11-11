@@ -16,12 +16,14 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
 export default function SignUpPage() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const passwordRequirements = [
     { label: "At least 6 characters", met: password.length >= 6 },
@@ -29,22 +31,58 @@ export default function SignUpPage() {
     { label: "One lowercase letter", met: /[a-z]/.test(password) },
   ];
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const signUpHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (!event.currentTarget.reportValidity()) {
       return;
     }
+
+    const formData = new FormData(event.currentTarget);
+    const name = formData.get("name")?.toString().trim() ?? "";
+    const email = formData.get("email")?.toString().trim() ?? "";
+    const photoUrl = formData.get("photoUrl")?.toString().trim();
 
     if (password !== confirmPassword) {
       setMessage("Your passwords don’t match. Check them and try again.");
       return;
     }
 
-    setMessage(
-      "This sign-up screen is a frontend preview. Account creation is not connected yet.",
-    );
-  }
+    setIsSubmitting(true);
+    setMessage("");
+
+    try {
+      // Better Auth expects "image"; the confirmation password is only for client-side validation.
+      const { data, error } = await authClient.signUp.email({
+        name,
+        email,
+        password,
+        ...(photoUrl ? { image: photoUrl } : {}),
+      });
+
+      if (error) {
+        setMessage(error.message || "Unable to create your account. Please try again.");
+        console.log(error);
+        
+        return;
+      }
+
+      if(data){
+        console.log(data);
+        
+      }
+
+      if (!data) {
+        setMessage("Unable to create your account. Please try again.");
+        return;
+      }
+
+      setMessage("Your account was created successfully.");
+    } catch {
+      setMessage("Unable to reach the sign-up service. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <main className="flex flex-1 items-center bg-[#f7f8f1] px-4 py-8 text-[#193b32] dark:bg-[#14241f] dark:text-[#f8f8ef] sm:px-6 sm:py-12">
@@ -157,7 +195,13 @@ export default function SignUpPage() {
               <span className="h-px flex-1 bg-[#e6e9e1] dark:bg-white/10" />
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-3.5">
+
+
+
+
+
+
+            <form onSubmit={signUpHandler} className="space-y-3.5">
               <div>
                 <label
                   htmlFor="name"
@@ -224,7 +268,6 @@ export default function SignUpPage() {
                     type="url"
                     autoComplete="url"
                     placeholder="https://example.com/your-photo.jpg"
-                    required
                     className="h-11 rounded-xl border-[#dfe4dc] bg-white pl-10 pr-4 text-sm text-[#263b31] placeholder:text-[#9aa59c] focus-visible:border-[#54836c] focus-visible:ring-[#54836c]/15 dark:border-white/15 dark:bg-[#1d3029] dark:text-[#eef3ec]"
                   />
                 </div>
@@ -320,15 +363,22 @@ export default function SignUpPage() {
 
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="group mt-1 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#214b38] text-sm font-semibold text-white shadow-[0_8px_18px_-10px_rgba(25,59,50,0.7)] transition-all hover:bg-[#173c34] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f0a36e] active:translate-y-px dark:bg-[#dceeb1] dark:text-[#214b38] dark:hover:bg-[#e8f4c8]"
               >
-                Create account
+                {isSubmitting ? "Creating account..." : "Create account"}
                 <ArrowRight
                   aria-hidden="true"
                   className="size-4 transition-transform group-hover:translate-x-0.5"
                 />
               </button>
             </form>
+
+
+
+
+
+
 
             {message && (
               <p
@@ -345,8 +395,8 @@ export default function SignUpPage() {
                 className="mt-0.5 size-4 shrink-0 text-[#78956e]"
               />
               <p className="text-[10px] leading-5 text-[#89958b] dark:text-[#aebdb1]">
-                Your details stay yours. This page is a frontend preview; your
-                account won’t be saved.
+                Your details are used to set up your Goodturn account. Keep your
+                password private.
               </p>
             </div>
 

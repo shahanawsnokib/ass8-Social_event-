@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Eye,
@@ -14,21 +15,87 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResetRequest, setIsResetRequest] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handlePasswordResetRequest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!event.currentTarget.reportValidity()) {
       return;
     }
 
-    setMessage(
-      "This sign-in screen is a frontend preview. Authentication is not connected yet.",
-    );
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email")?.toString().trim() ?? "";
+
+    setIsSubmitting(true);
+    setMessage("");
+
+    try {
+      // Always show the same message so the page does not reveal registered emails.
+      const { error } = await authClient.requestPasswordReset({
+        email,
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        setMessage(error.message || "Unable to send a reset link. Please try again.");
+        return;
+      }
+
+      setMessage("If an account exists for this email, a reset link will be sent shortly.");
+    } catch {
+      setMessage("Unable to reach the password reset service. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!event.currentTarget.reportValidity()) {
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email")?.toString().trim() ?? "";
+    const password = formData.get("password")?.toString() ?? "";
+    const rememberMe = formData.get("remember") === "on";
+
+    setIsSubmitting(true);
+    setMessage("");
+
+    try {
+      // Send only the sign-in fields; the checkbox controls session persistence.
+      const { data, error } = await authClient.signIn.email({
+        email,
+        password,
+        rememberMe,
+      });
+      if (error) {
+        setMessage(error.message || "Unable to sign in. Check your email and password.");
+        return;
+      }
+
+      if (!data) {
+        setMessage("Unable to sign in. Please try again.");
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch {
+      setMessage("Unable to reach the sign-in service. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -111,17 +178,20 @@ export default function LoginPage() {
                 <HandHeart aria-hidden="true" className="size-5" />
               </span>
               <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#52735e] dark:text-[#a9c5ad]">
-                Welcome back
+                {isResetRequest ? "Account help" : "Welcome back"}
               </p>
               <h2 className="mt-1.5 text-3xl font-semibold tracking-[-0.055em]">
-                Sign in to Goodturn
+                {isResetRequest ? "Reset your password" : "Sign in to Goodturn"}
               </h2>
               <p className="mt-2 text-sm leading-6 text-[#718078] dark:text-[#aebdb1]">
-                Your community is glad you’re here.
+                {isResetRequest
+                  ? "We’ll email you a secure link to choose a new password."
+                  : "Your community is glad you’re here."}
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            {!isResetRequest && (
+              <div className="grid gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() =>
@@ -149,17 +219,23 @@ export default function LoginPage() {
                 </span>
                 Continue with GitHub
               </button>
-            </div>
+              </div>
+            )}
 
-            <div className="my-6 flex items-center gap-3">
+            {!isResetRequest && (
+              <div className="my-6 flex items-center gap-3">
               <span className="h-px flex-1 bg-[#e6e9e1] dark:bg-white/10" />
               <span className="text-[10px] font-medium text-[#89958b]">
                 or sign in with email
               </span>
               <span className="h-px flex-1 bg-[#e6e9e1] dark:bg-white/10" />
-            </div>
+              </div>
+            )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form
+              onSubmit={isResetRequest ? handlePasswordResetRequest : handleSubmit}
+              className="space-y-4"
+            >
               <div>
                 <label
                   htmlFor="email"
@@ -184,6 +260,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {!isResetRequest && (
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
                   <label
@@ -192,6 +269,16 @@ export default function LoginPage() {
                   >
                     Password
                   </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsResetRequest(true);
+                      setMessage("");
+                    }}
+                    className="text-xs font-semibold text-[#315d49] underline decoration-[#a8b99c] underline-offset-4 hover:text-[#173c34] dark:text-[#dceeb1] dark:hover:text-white"
+                  >
+                    Forgot password?
+                  </button>
                 </div>
                 <div className="relative">
                   <LockKeyhole
@@ -222,7 +309,9 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
+              )}
 
+              {!isResetRequest && (
               <div className="flex items-center pt-0.5">
                 <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-[#647268] dark:text-[#b6c4b8]">
                   <input
@@ -233,18 +322,35 @@ export default function LoginPage() {
                   Keep me signed in
                 </label>
               </div>
+              )}
 
               <button
                 type="submit"
-                className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#214b38] text-sm font-semibold text-white shadow-[0_8px_18px_-10px_rgba(25,59,50,0.7)] transition-all hover:bg-[#173c34] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f0a36e] active:translate-y-px dark:bg-[#dceeb1] dark:text-[#214b38] dark:hover:bg-[#e8f4c8]"
+                disabled={isSubmitting}
+                className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#214b38] text-sm font-semibold text-white shadow-[0_8px_18px_-10px_rgba(25,59,50,0.7)] transition-all hover:bg-[#173c34] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f0a36e] active:translate-y-px disabled:cursor-not-allowed disabled:opacity-70 dark:bg-[#dceeb1] dark:text-[#214b38] dark:hover:bg-[#e8f4c8]"
               >
-                Sign in
+                {isSubmitting
+                  ? isResetRequest ? "Sending link..." : "Signing in..."
+                  : isResetRequest ? "Send reset link" : "Sign in"}
                 <ArrowRight
                   aria-hidden="true"
                   className="size-4 transition-transform group-hover:translate-x-0.5"
                 />
               </button>
             </form>
+
+            {isResetRequest && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsResetRequest(false);
+                  setMessage("");
+                }}
+                className="mt-4 w-full text-center text-xs font-semibold text-[#315d49] underline decoration-[#a8b99c] underline-offset-4 hover:text-[#173c34] dark:text-[#dceeb1] dark:hover:text-white"
+              >
+                Back to sign in
+              </button>
+            )}
 
             {message && (
               <p

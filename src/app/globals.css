@@ -4,6 +4,31 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@keyframes goodturn-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.goodturn-enter {
+  animation: goodturn-enter 650ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.goodturn-enter-late {
+  animation-delay: 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .goodturn-enter {
+    animation: none;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

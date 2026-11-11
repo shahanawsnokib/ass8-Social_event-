@@ -12,10 +12,22 @@ import {
   X,
 } from "lucide-react";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { authClient } from "@/lib/auth-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@base-ui/react";
+
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Upcoming events", href: "/events" },
-  { label: "Our impact", href: "/#mission" },
+  { label: "Our impact", href: "/impact" },
 ];
 
 export function Navbar() {
@@ -28,6 +40,7 @@ export function Navbar() {
     document.documentElement.classList.toggle("dark", nextIsDark);
     setIsDark(nextIsDark);
   }
+    
 
   function closeMenu() {
     setIsMenuOpen(false);
@@ -40,6 +53,20 @@ export function Navbar() {
 
     return pathname === href || pathname.startsWith(`${href}/`);
   }
+
+
+  const {data: session} = authClient.useSession()
+  const user = session?.user;
+  // console.log(user);
+  
+// signout Handler
+
+ const signouthandler = () => {
+  authClient.signOut()
+  console.log('out ');
+ }
+
+
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#e5e9df] bg-[#f7f8f1]/95 px-3 py-2 backdrop-blur-md dark:border-white/10 dark:bg-[#14241f]/95 sm:px-5 sm:py-3">
@@ -101,7 +128,26 @@ export function Navbar() {
               <Moon aria-hidden="true" className="size-4" />
             )}
           </button>
-          <Link
+           
+
+   {user? <Popover>
+  <PopoverTrigger render={ <Avatar>
+            <AvatarImage referrerPolicy="no-referrer" src={user?.image} />
+            <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+            </Avatar>}>
+    Open Popover
+  </PopoverTrigger>
+  <PopoverContent>
+    <PopoverHeader>
+      <PopoverTitle>Hi, {user?.name}</PopoverTitle>
+      <PopoverDescription><p>{user?.email}</p></PopoverDescription>
+       <Link href='/profile'>Profile</Link>
+       <Button onClick={signouthandler}>Signout</Button>
+    </PopoverHeader>
+  </PopoverContent>
+</Popover> : <>
+
+   <Link
             href="/login"
             className="hidden h-9 items-center rounded-full border border-white/20 px-4 text-[11px] font-medium text-[#fffaf0] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f0a36e] sm:inline-flex"
           >
@@ -114,6 +160,11 @@ export function Navbar() {
             Host an event
             <ArrowUpRight aria-hidden="true" className="size-3.5" />
           </Link>
+
+</>}
+
+
+       
           <button
             type="button"
             aria-expanded={isMenuOpen}

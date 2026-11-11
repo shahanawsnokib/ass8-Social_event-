@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/navigation"
 import { Button } from "./button"
 
-const DeleteEvent = ({ event }) => {
+exitconst DeleteEvent = ({ event }) => {
     const id = event.id;
     const router = useRouter();
 

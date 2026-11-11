@@ -41,21 +41,21 @@ export default function EventsPage({ limit }: EventsPageProps) {
   const displayedEvents = limit ? events.slice(0, limit) : events;
 
   return (
-    <main className="min-h-screen bg-[#f7f8f1] px-4 py-10">
+    <main className="min-h-screen bg-[#f7f8f1] px-4 py-10 text-[#193b32] dark:bg-[#14241f] dark:text-[#f8f8ef]">
       <div className="mx-auto max-w-6xl">
 
         {/* Heading */}
-        <h1 className="text-3xl font-bold text-green-900">
+        <h1 className="goodturn-enter text-3xl font-bold text-green-900 dark:text-[#f8f8ef]">
           Upcoming Community Events
         </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className="goodturn-enter goodturn-enter-late mt-2 text-gray-600 dark:text-[#c0cdc2]">
           Join local events and make a difference in your community.
         </p>
 
         {/* Loading */}
         {loading && (
-          <p className="mt-6 text-gray-500">Loading events...</p>
+          <p className="mt-6 text-gray-500 dark:text-[#aebdb1]">Loading events...</p>
         )}
 
         {/* Error */}
@@ -65,7 +65,7 @@ export default function EventsPage({ limit }: EventsPageProps) {
 
         {/* No Events */}
         {!loading && !error && displayedEvents.length === 0 && (
-          <p className="mt-6 text-gray-500">
+          <p className="mt-6 text-gray-500 dark:text-[#aebdb1]">
             No events available.
           </p>
         )}
@@ -73,10 +73,11 @@ export default function EventsPage({ limit }: EventsPageProps) {
         {/* Event Cards */}
         {!loading && !error && displayedEvents.length > 0 && (
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {displayedEvents.map((event) => (
-              <div
+            {displayedEvents.map((event, index) => (
+              <article
                 key={event.id}
-                className="overflow-hidden rounded-xl bg-white shadow-md"
+                style={{ animationDelay: `${Math.min(index, 8) * 75}ms` }}
+                className="goodturn-enter group overflow-hidden rounded-xl bg-white shadow-md transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-reduce:transition-none dark:bg-[#1b2d26]"
               >
                 {/* Keep a branded image fallback visible if a thumbnail is missing or unavailable. */}
                 <div className="relative flex h-48 items-center justify-center overflow-hidden bg-gradient-to-br from-[#315d49] via-[#78956e] to-[#d1bd8b]">
@@ -102,7 +103,7 @@ export default function EventsPage({ limit }: EventsPageProps) {
                     onError={(imageEvent) => {
                       imageEvent.currentTarget.style.display = "none";
                     }}
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
                   />
                   )}
                 </div>
@@ -110,23 +111,23 @@ export default function EventsPage({ limit }: EventsPageProps) {
                 {/* Event Information */}
                 <div className="p-5">
 
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs text-green-800">
+                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs text-green-800 dark:bg-[#294837] dark:text-[#dceeb1]">
                     {event.eventType}
                   </span>
 
-                  <h2 className="mt-4 text-xl font-bold text-gray-800">
+                  <h2 className="mt-4 text-xl font-bold text-gray-800 dark:text-[#f8f8ef]">
                     {event.title}
                   </h2>
 
-                  <p className="mt-2 line-clamp-2 text-sm text-gray-600">
+                  <p className="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-[#c0cdc2]">
                     {event.description}
                   </p>
 
-                  <p className="mt-4 text-sm text-gray-600">
+                  <p className="mt-4 text-sm text-gray-600 dark:text-[#c0cdc2]">
                     📅 {getEventDateLabel(event.eventDate)}
                   </p>
 
-                  <p className="mt-2 text-sm text-gray-600">
+                  <p className="mt-2 text-sm text-gray-600 dark:text-[#c0cdc2]">
                     📍 {event.location}
                   </p>
 
@@ -139,7 +140,7 @@ export default function EventsPage({ limit }: EventsPageProps) {
                   </Link>
 
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}
