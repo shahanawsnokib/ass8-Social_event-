@@ -42,6 +42,7 @@ export default function RemoveJoinedButton({
 
     setIsRemoving(true);
     try {
+      // Use the joined-record ID so this removes the registration, not the event.
       const response = await fetch(
         getCommunityJoinedEventUrl(joinedRecordId),
         { method: "DELETE" },

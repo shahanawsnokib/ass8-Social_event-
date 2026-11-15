@@ -2,17 +2,94 @@ import Link from "next/link";
 import { CalendarDays, MapPin } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import RemoveJoinedButton from "@/components/my-plan/remove-joined-button";
+import { getCommunityJoinedEventsForUserUrl } from "@/lib/community-events";
 
-const page = async () => {
+type JoinedEvent = {
+  id: string;
+  joinedRecordId: string;
+  title: string;
+  description: string;
+  eventType: string;
+  eventDate: string;
+  location: string;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function getJoinedEvents(payload: unknown): JoinedEvent[] {
+  let records: unknown[] = [];
+
+  if (Array.isArray(payload)) {
+    records = payload;
+  } else if (isRecord(payload)) {
+    const wrappedRecords =
+      payload.joinedEvents ?? payload.joined ?? payload.events ?? payload.data;
+    records = Array.isArray(wrappedRecords) ? wrappedRecords : [payload];
+  }
+
+  // Keep the registration ID separate from the event ID for the Remove button.
+  return records
+    .filter(isRecord)
+    .flatMap((record) => {
+      if (typeof record.id !== "string") {
+        return [];
+      }
+
+      return [{
+        id: record.id,
+        joinedRecordId:
+          typeof record._id === "string" ? record._id : "",
+        title: typeof record.title === "string" ? record.title : "Community event",
+        description:
+          typeof record.description === "string" ? record.description : "",
+        eventType:
+          typeof record.eventType === "string" ? record.eventType : "Community",
+        eventDate: typeof record.eventDate === "string" ? record.eventDate : "",
+        location:
+          typeof record.location === "string"
+            ? record.location
+            : "Location to be announced",
+      }];
+    })
+    .sort((first, second) => first.eventDate.localeCompare(second.eventDate));
+}
+
+export default async function MyPlanPage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
   const email = session?.user?.email;
 
-  const response = await fetch(`http://localhost:5000/joined/${email}`);
-  const data = await response.json();
-  const joinedEvents = Array.isArray(data) ? data : [];
+  if (!email) {
+    redirect("/login");
+  }
+
+  let joinedEvents: JoinedEvent[] = [];
+  let loadError = false;
+
+  try {
+    const response = await fetch(getCommunityJoinedEventsForUserUrl(email), {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Could not load joined events (HTTP ${response.status}).`);
+    }
+
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!contentType.toLowerCase().includes("application/json")) {
+      throw new Error("The joined-events endpoint returned a non-JSON response.");
+    }
+
+    joinedEvents = getJoinedEvents(await response.json());
+  } catch (error) {
+    console.error("Could not load My Plan:", error);
+    loadError = true;
+  }
 
   return (
     <main className="min-h-screen flex-1 bg-[#f7f8f1] px-4 py-10 text-[#193b32] dark:bg-[#14241f] dark:text-[#f8f8ef] sm:px-6">
@@ -25,7 +102,14 @@ const page = async () => {
           Keep track of the events you have signed up to support.
         </p>
 
-        {joinedEvents.length === 0 ? (
+        {loadError ? (
+          <p
+            role="alert"
+            className="mt-8 rounded-xl bg-red-50 p-5 text-sm text-red-800 dark:bg-red-950/30 dark:text-red-200"
+          >
+            We couldn&apos;t load your plan. Please try again later.
+          </p>
+        ) : joinedEvents.length === 0 ? (
           <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm dark:bg-[#1b2d26]">
             <h2 className="text-lg font-semibold">No events in your plan yet</h2>
             <p className="mt-2 text-sm text-[#718078] dark:text-[#aebdb1]">
@@ -42,7 +126,7 @@ const page = async () => {
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {joinedEvents.map((event) => (
               <article
-                key={event._id ?? event.id}
+                key={event.joinedRecordId || event.id}
                 className="flex flex-col rounded-2xl border border-[#e4e9df] bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#1b2d26]"
               >
                 <span className="w-fit rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800 dark:bg-[#294837] dark:text-[#dceeb1]">
@@ -70,9 +154,7 @@ const page = async () => {
                 </div>
                 <div className="mt-auto pt-6">
                   <RemoveJoinedButton
-                    joinedRecordId={
-                      typeof event._id === "string" ? event._id : ""
-                    }
+                    joinedRecordId={event.joinedRecordId}
                     eventTitle={event.title}
                   />
                 </div>
@@ -83,6 +165,4 @@ const page = async () => {
       </div>
     </main>
   );
-};
-
-export default page;
+}

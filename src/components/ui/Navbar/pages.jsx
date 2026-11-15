@@ -131,6 +131,14 @@ export function Navbar() {
           </button>
            
 
+          <Link
+            href="/events/create"
+            className="hidden h-9 items-center gap-1.5 rounded-full bg-[#dceeb1] px-4 text-[11px] font-semibold text-[#253e31] transition-colors hover:bg-[#e8f4c8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f0a36e] sm:inline-flex"
+          >
+            Host an event
+            <ArrowUpRight aria-hidden="true" className="size-3.5" />
+          </Link>
+
    {user? <Popover>
   <PopoverTrigger render={ <Avatar>
             <AvatarImage referrerPolicy="no-referrer" src={user?.image} />
@@ -154,14 +162,6 @@ export function Navbar() {
           >
             Log in
           </Link>
-          <Link
-            href="/events/create"
-            className="hidden h-9 items-center gap-1.5 rounded-full bg-[#dceeb1] px-4 text-[11px] font-semibold text-[#253e31] transition-colors hover:bg-[#e8f4c8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f0a36e] sm:inline-flex"
-          >
-            Host an event
-            <ArrowUpRight aria-hidden="true" className="size-3.5" />
-          </Link>
-
 </>}
 
 

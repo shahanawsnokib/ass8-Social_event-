@@ -29,6 +29,10 @@ export function getCommunityJoinedEventsUrl() {
   return `${apiUrl}/joined`;
 }
 
+export function getCommunityJoinedEventsForUserUrl(email: string) {
+  return `${getCommunityJoinedEventsUrl()}/${encodeURIComponent(email)}`;
+}
+
 export function getCommunityJoinedEventUrl(joinedRecordId: string) {
   return `${getCommunityJoinedEventsUrl()}/${encodeURIComponent(joinedRecordId)}`;
 }
@@ -54,7 +58,7 @@ function normalizeEvent(value: unknown): CommunityEvent | null {
     return null;
   }
 
-  const id = getEventId(value._id);
+  const id = getEventId(value._id ?? value.id);
   if (!id) {
     return null;
   }
@@ -153,6 +157,11 @@ export async function getCommunityEvents(): Promise<CommunityEvent[]> {
 
   if (!response.ok) {
     throw new Error(`Could not load events (HTTP ${response.status}).`);
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("application/json")) {
+    throw new Error("The events endpoint returned a non-JSON response.");
   }
 
   const payload: unknown = await response.json();
