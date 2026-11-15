@@ -9,7 +9,7 @@ export type CommunityEvent = {
   organizerEmail: string;
 };
 
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000")
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? "https://ass8server-hxq5vf4w9-mdshahanawsnokibs-projects.vercel.app")
   .replace(/\/+$/, "");
 
 export function getCommunityEventUrl(id: string) {

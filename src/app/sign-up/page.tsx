@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Eye,
@@ -19,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignUpPage() {
+  const router = useRouter();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -70,7 +72,8 @@ export default function SignUpPage() {
         return;
       }
 
-      setMessage("Your account was created successfully.");
+      router.replace("/");
+      router.refresh();
     } catch {
       setMessage("Unable to reach the sign-up service. Please try again.");
     } finally {
