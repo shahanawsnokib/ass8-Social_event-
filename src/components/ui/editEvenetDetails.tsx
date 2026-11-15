@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
-import type { CommunityEvent } from "@/lib/community-events";
+import {
+  getCommunityEventUrl,
+  type CommunityEvent,
+} from "@/lib/community-events";
 
 const labelClassName =
   "mb-0.5 block text-[8px] leading-3 font-medium text-[#37453c] dark:text-[#d8e2d8]";
@@ -82,7 +85,7 @@ export default function EditEventDetails({ event }: EditEventDetailsProps) {
     setIsSaving(true);
     try {
  const response = await fetch(
-  `http://localhost:5000/events/${event.id}`,
+  getCommunityEventUrl(event.id),
   {
     method: "PATCH",
     headers: {

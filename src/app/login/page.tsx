@@ -78,6 +78,7 @@ export default function LoginPage() {
         email,
         password,
         rememberMe,
+        callbackURL: "/",
       });
       if (error) {
         setMessage(error.message || "Unable to sign in. Check your email and password.");

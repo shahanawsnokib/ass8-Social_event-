@@ -4,6 +4,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
+import { getCommunityEventCreateUrl } from "@/lib/community-events";
 
 const labelClassName =
   "mb-0.5 block text-[8px] leading-3 font-medium text-[#37453c] dark:text-[#d8e2d8]";
@@ -77,7 +78,7 @@ export default function CreateEventPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/create-event", {
+      const response = await fetch(getCommunityEventCreateUrl(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

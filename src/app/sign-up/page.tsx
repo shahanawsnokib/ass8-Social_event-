@@ -57,6 +57,7 @@ export default function SignUpPage() {
         email,
         password,
         ...(photoUrl ? { image: photoUrl } : {}),
+        callbackURL: "/"
       });
 
       if (error) {

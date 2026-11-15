@@ -27,6 +27,7 @@ import { Button } from "@base-ui/react";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Upcoming events", href: "/events" },
+  { label: "My Plan", href: "/my-plan" },
   { label: "Our impact", href: "/impact" },
 ];
 

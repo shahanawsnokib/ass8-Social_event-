@@ -16,6 +16,23 @@ export function getCommunityEventUrl(id: string) {
   return `${apiUrl}/events/${encodeURIComponent(id)}`;
 }
 
+export function getCommunityEventsUrl() {
+  return `${apiUrl}/events`;
+}
+
+export function getCommunityEventCreateUrl() {
+  return `${apiUrl}/create-event`;
+}
+
+// Shared endpoint for checking and submitting event registrations.
+export function getCommunityJoinedEventsUrl() {
+  return `${apiUrl}/joined`;
+}
+
+export function getCommunityJoinedEventUrl(joinedRecordId: string) {
+  return `${getCommunityJoinedEventsUrl()}/${encodeURIComponent(joinedRecordId)}`;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
@@ -74,8 +91,65 @@ function getEventRecords(payload: unknown): unknown[] {
   return [payload];
 }
 
+function getJoinedRecords(payload: unknown): Record<string, unknown>[] {
+  if (Array.isArray(payload)) {
+    return payload.filter(isRecord);
+  }
+
+  if (!isRecord(payload)) {
+    return [];
+  }
+
+  const records = payload.joinedEvents ?? payload.joined ?? payload.data;
+
+  return Array.isArray(records) ? records.filter(isRecord) : [];
+}
+
+function normalizeJoinedEvent(value: Record<string, unknown>): CommunityEvent | null {
+  const id = getEventId(value.eventId ?? value.id);
+  if (!id) {
+    return null;
+  }
+
+  return {
+    id,
+    title: typeof value.title === "string" ? value.title : "Community event",
+    description: typeof value.description === "string" ? value.description : "",
+    eventType: typeof value.eventType === "string" ? value.eventType : "Community",
+    eventDate: typeof value.eventDate === "string" ? value.eventDate : "",
+    thumbnailUrl: typeof value.thumbnailUrl === "string" ? value.thumbnailUrl : "",
+    location: typeof value.location === "string" ? value.location : "Location to be announced",
+    organizerEmail: typeof value.organizerEmail === "string" ? value.organizerEmail : "",
+  };
+}
+
+export async function getCommunityJoinedEventsForUser(
+  email: string,
+): Promise<CommunityEvent[]> {
+  const response = await fetch(getCommunityJoinedEventsUrl(), {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Could not load joined events (HTTP ${response.status}).`);
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("application/json")) {
+    throw new Error("The joined-events endpoint returned a non-JSON response.");
+  }
+
+  const payload: unknown = await response.json();
+
+  return getJoinedRecords(payload)
+    .filter((record) => (record.email ?? record.userEmail) === email)
+    .map(normalizeJoinedEvent)
+    .filter((event): event is CommunityEvent => event !== null)
+    .sort((first, second) => first.eventDate.localeCompare(second.eventDate));
+}
+
 export async function getCommunityEvents(): Promise<CommunityEvent[]> {
-  const response = await fetch(`${apiUrl}/events`);
+  const response = await fetch(getCommunityEventsUrl());
 
   if (!response.ok) {
     throw new Error(`Could not load events (HTTP ${response.status}).`);

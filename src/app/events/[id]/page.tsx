@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import EditEventDetails from "@/components/ui/editEvenetDetails";
 import EventDetailImage from "@/components/ui/events/event-detail-image";
 import DeleteEventButton from "@/components/ui/delete_event";
+import Join from "../../../components/join/join"
 
 type EventDetailsPageProps = {
   // Next.js gives this page the value from the [id] part of the URL.
@@ -203,75 +204,25 @@ export default async function EventDetailsPage({
                   "More information about this event will be shared soon."}
               </p>
 
-              <div className="mx-auto my-6 flex max-w-lg flex-col gap-3 sm:flex-row">
+             {/* <div className="mx-auto my-6 flex max-w-lg flex-col gap-3 sm:flex-row"> */}
                 {/* Join Now */}
-                <Link
-                  href={`/events/${event.id}/join`}
-                  className="rounded-lg bg-green-800 px-5 py-3 text-center font-medium text-white hover:bg-green-900"
-                >
-                  Join Now
-                </Link>
-              </div>
+                {/* <Link */}
+                  {/* href={`/events/${event.id}/join`} */}
+                  {/* className="rounded-lg bg-green-800 px-5 py-3 text-center font-medium text-white hover:bg-green-900" */}
+                {/* > */}
+                  {/* Join Now */}
+                {/* </Link> */}
+              {/* </div> */} 
             </section>
 
-            <aside
-              aria-label="Event information"
-              className="h-fit rounded-2xl bg-[#f4f6ef] p-5 dark:bg-[#14241f]"
-            >
-              <h2 className="text-sm font-semibold">Event information</h2>
-              <dl className="mt-5 space-y-5">
-                <div className="flex gap-3">
-                  <CalendarDays
-                    aria-hidden="true"
-                    className="mt-0.5 size-4 shrink-0 text-[#52735e] dark:text-[#a9c5ad]"
-                  />
-                  <div>
-                    <dt className="text-xs text-[#718078] dark:text-[#aebdb1]">
-                      Date
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium">
-                      {getEventDateLabel(event.eventDate)}
-                    </dd>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <MapPin
-                    aria-hidden="true"
-                    className="mt-0.5 size-4 shrink-0 text-[#52735e] dark:text-[#a9c5ad]"
-                  />
-                  <div>
-                    <dt className="text-xs text-[#718078] dark:text-[#aebdb1]">
-                      Location
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium">
-                      {event.location}
-                    </dd>
-                  </div>
-                </div>
-                {event.organizerEmail && (
-                  <div className="flex gap-3">
-                    <Mail
-                      aria-hidden="true"
-                      className="mt-0.5 size-4 shrink-0 text-[#52735e] dark:text-[#a9c5ad]"
-                    />
-                    <div className="min-w-0">
-                      <dt className="text-xs text-[#718078] dark:text-[#aebdb1]">
-                        Organizer
-                      </dt>
-                      <dd className="mt-1 break-all text-sm font-medium">
-                        <a
-                          href={`mailto:${event.organizerEmail}`}
-                          className="underline decoration-[#52735e]/40 underline-offset-4 hover:text-[#52735e] dark:hover:text-[#a9c5ad]"
-                        >
-                          {event.organizerEmail}
-                        </a>
-                      </dd>
-                    </div>
-                  </div>
-                )}
-              </dl>
-            </aside>
+           <div>
+
+         <Join event = {event}/>
+           </div>
+            
           </div>
+
+          
         </section>
       </article>
     </main>

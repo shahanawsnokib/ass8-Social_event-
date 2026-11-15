@@ -37,8 +37,15 @@ export default function EventsPage({ limit }: EventsPageProps) {
     fetchEvents();
   }, []);
 
-  // Show limited events if limit is provided
-  const displayedEvents = limit ? events.slice(0, limit) : events;
+
+
+// sort date 
+
+
+  const sortedEvents = [...events].sort((first, second) =>
+    first.eventDate.localeCompare(second.eventDate),
+  );
+  const displayedEvents = limit ? sortedEvents.slice(0, limit) : sortedEvents;
 
   return (
     <main className="min-h-screen bg-[#f7f8f1] px-4 py-10 text-[#193b32] dark:bg-[#14241f] dark:text-[#f8f8ef]">
