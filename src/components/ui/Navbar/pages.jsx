@@ -8,7 +8,9 @@ import {
   HandHeart,
   Menu,
   Moon,
+  LogOut,
   Sun,
+  UserRound,
   X,
 } from "lucide-react";
 
@@ -22,7 +24,6 @@ import {
 } from "@/components/ui/popover"
 import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@base-ui/react";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -58,6 +59,8 @@ export function Navbar() {
 
   const {data: session} = authClient.useSession()
   const user = session?.user;
+  // Use a name or email initial when the account has no profile photo.
+  const userInitial = user?.name?.charAt(0) ?? user?.email?.charAt(0) ?? "U";
   // console.log(user);
   
 // signout Handler
@@ -139,22 +142,86 @@ export function Navbar() {
             <ArrowUpRight aria-hidden="true" className="size-3.5" />
           </Link>
 
-   {user? <Popover>
-  <PopoverTrigger render={ <Avatar>
-            <AvatarImage referrerPolicy="no-referrer" src={user?.image} />
-            <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
-            </Avatar>}>
-    Open Popover
-  </PopoverTrigger>
-  <PopoverContent>
-    <PopoverHeader>
-      <PopoverTitle>Hi, {user?.name}</PopoverTitle>
-      <PopoverDescription><p>{user?.email}</p></PopoverDescription>
-       <Link href='/profile'>Profile</Link>
-       <Button onClick={signouthandler}>Signout</Button>
-    </PopoverHeader>
-  </PopoverContent>
-</Popover> : <>
+   {user ? (
+            <Popover>
+              <PopoverTrigger
+                aria-label="Open account menu"
+                render={
+                  <button
+                    type="button"
+                    className="rounded-full p-0.5 transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f0a36e]"
+                  />
+                }
+              >
+                <Avatar
+                  size="lg"
+                  className="ring-2 ring-[#dceeb1] ring-offset-2 ring-offset-[#173c34]"
+                >
+                  <AvatarImage
+                    referrerPolicy="no-referrer"
+                    src={user.image ?? undefined}
+                  />
+                  <AvatarFallback className="bg-[#f0a36e] font-semibold text-[#173c34]">
+                    {userInitial}
+                  </AvatarFallback>
+                </Avatar>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                sideOffset={12}
+                className="w-72 max-w-[calc(100vw-1.5rem)] gap-0 overflow-hidden rounded-2xl border border-[#dfe5da] bg-[#fffdf7] p-0 text-[#193b32] shadow-[0_18px_50px_-20px_rgba(23,60,52,0.5)] dark:border-white/10 dark:bg-[#1b2d26] dark:text-[#f8f8ef]"
+              >
+                <PopoverHeader className="flex-row items-center gap-3 border-b border-[#e5e9df] bg-[#f7f8f1] p-4 dark:border-white/10 dark:bg-[#14241f]">
+                  <Avatar
+                    size="lg"
+                    className="ring-2 ring-white dark:ring-white/10"
+                  >
+                    <AvatarImage
+                      referrerPolicy="no-referrer"
+                      src={user.image ?? undefined}
+                    />
+                    <AvatarFallback className="bg-[#f0a36e] font-semibold text-[#173c34]">
+                      {userInitial}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <PopoverTitle className="truncate text-sm font-semibold">
+                      {user.name || "Goodturn member"}
+                    </PopoverTitle>
+                    <PopoverDescription className="mt-0.5 truncate text-xs text-[#718078] dark:text-[#aebdb1]">
+                      {user.email}
+                    </PopoverDescription>
+                  </div>
+                </PopoverHeader>
+                <div className="p-2">
+                  <Link
+                    href="/profile"
+                    className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#365347] transition-colors hover:bg-[#edf2e8] focus-visible:outline-2 focus-visible:outline-[#39765e] dark:text-[#e4eee5] dark:hover:bg-white/5"
+                  >
+                    <UserRound
+                      aria-hidden="true"
+                      className="size-4 text-[#52735e] dark:text-[#a9c5ad]"
+                    />
+                    Profile
+                    <ArrowUpRight
+                      aria-hidden="true"
+                      className="ml-auto size-4 opacity-50"
+                    />
+                  </Link>
+                </div>
+                <div className="border-t border-[#e5e9df] p-2 dark:border-white/10">
+                  <button
+                    type="button"
+                    onClick={signouthandler}
+                    className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#a94336] transition-colors hover:bg-[#fbefec] focus-visible:outline-2 focus-visible:outline-[#a94336] dark:text-[#ffb8a9] dark:hover:bg-[#a94336]/10"
+                  >
+                    <LogOut aria-hidden="true" className="size-4" />
+                    Sign out
+                  </button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          ) : <>
 
    <Link
             href="/login"

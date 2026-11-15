@@ -72,6 +72,7 @@ The event API is a separate service and is not included in this repository.
 | `/events/[id]` | View an event and join | Public; sign-in required to join |
 | `/events/create` | Create an event | Sign-in required |
 | `/my-plan` | View joined events | Sign-in required |
+| `/profile` | View your account profile | Sign-in required |
 | `/impact` | Learn about community impact | Public |
 | `/login` and `/sign-up` | Authentication | Public |
 
