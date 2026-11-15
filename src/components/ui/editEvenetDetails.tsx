@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
+import { fetchCommunityApi } from "@/lib/community-api-client";
 import {
   getCommunityEventUrl,
   type CommunityEvent,
@@ -24,6 +25,7 @@ type EventFormData = Omit<CommunityEvent, "id">;
 
 type EditEventDetailsProps = {
   event: CommunityEvent;
+  onUpdated?: () => void;
 };
 
 function toFormData(event: CommunityEvent): EventFormData {
@@ -47,7 +49,10 @@ function getLocalDateString() {
   return `${year}-${month}-${day}`;
 }
 
-export default function EditEventDetails({ event }: EditEventDetailsProps) {
+export default function EditEventDetails({
+  event,
+  onUpdated,
+}: EditEventDetailsProps) {
   const router = useRouter();
   // The event details page passes its already-loaded event into this component.
   const [formData, setFormData] = useState(() => toFormData(event));
@@ -74,7 +79,10 @@ export default function EditEventDetails({ event }: EditEventDetailsProps) {
       return;
     }
 
-    if (formData.eventDate <= getLocalDateString()) {
+    if (
+      formData.eventDate !== event.eventDate &&
+      formData.eventDate <= getLocalDateString()
+    ) {
       toast.add({
         title: "Choose a future date",
         description: "The event date must be later than today.",
@@ -84,7 +92,7 @@ export default function EditEventDetails({ event }: EditEventDetailsProps) {
     }
     setIsSaving(true);
     try {
- const response = await fetch(
+      const response = await fetchCommunityApi(
   getCommunityEventUrl(event.id),
   {
     method: "PATCH",
@@ -105,6 +113,7 @@ export default function EditEventDetails({ event }: EditEventDetailsProps) {
         type: "success",
       });
       setIsOpen(false);
+      onUpdated?.();
       router.refresh();
     } catch (error) {
       console.error("Could not update event:", error);
@@ -196,7 +205,11 @@ export default function EditEventDetails({ event }: EditEventDetailsProps) {
                   id="edit-event-date"
                   name="eventDate"
                   type="date"
-                  min={getLocalDateString()}
+                  min={
+                    event.eventDate <= getLocalDateString()
+                      ? event.eventDate
+                      : getLocalDateString()
+                  }
                   value={formData.eventDate}
                   onChange={handleChange}
                   required

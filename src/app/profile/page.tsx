@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import ProfileEditor from "@/components/profile/profile-editor";
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -90,6 +91,11 @@ export default async function ProfilePage() {
               </div>
             </dl>
           </div>
+
+          <ProfileEditor
+            initialName={user.name}
+            initialImage={user.image ?? ""}
+          />
 
           <Link
             href="/my-plan"

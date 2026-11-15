@@ -72,8 +72,12 @@ export default async function MyPlanPage() {
   let loadError = false;
 
   try {
+    const { token } = await auth.api.getToken({
+      headers: await headers(),
+    });
     const response = await fetch(getCommunityJoinedEventsForUserUrl(email), {
       cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!response.ok) {

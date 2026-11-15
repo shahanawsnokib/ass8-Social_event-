@@ -4,11 +4,14 @@ import { CalendarDays, Mail, MapPin } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 import {
-  getCommunityJoinedEventsForUser,
   getCommunityJoinedEventsUrl,
   getEventDateLabel,
   type CommunityEvent,
 } from "@/lib/community-events";
+import {
+  fetchCommunityApi,
+  getCommunityJoinedEventsForUser,
+} from "@/lib/community-api-client";
 import { Button } from '@base-ui/react';
 import { authClient } from '@/lib/auth-client';
 import { toast } from '@/components/ui/toast';
@@ -37,7 +40,7 @@ const Join = ({event}: { event: CommunityEvent }) => {
       currentJoinKey !== null && checkedJoinKey !== currentJoinKey;
 
     const isEventClosed = /^\d{4}-\d{2}-\d{2}$/.test(event.eventDate)
-      && event.eventDate < getLocalDateString();
+      && event.eventDate <= getLocalDateString();
 
     useEffect(() => {
       if (!userEmail) {
@@ -98,15 +101,12 @@ const handleJoin = async (e: MouseEvent<HTMLButtonElement>) => {
 
         setIsJoining(true);
         try {
-          const response = await fetch(getCommunityJoinedEventsUrl(), {
+          const response = await fetchCommunityApi(getCommunityJoinedEventsUrl(), {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              ...user,
-              ...event,
-            }),
+            body: JSON.stringify({ eventId: event.id }),
           });
 
           if (!response.ok) {

@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { getCommunityJoinedEventUrl } from "@/lib/community-events";
+import { fetchCommunityApi } from "@/lib/community-api-client";
 
 type RemoveJoinedButtonProps = {
   joinedRecordId: string;
@@ -43,7 +44,7 @@ export default function RemoveJoinedButton({
     setIsRemoving(true);
     try {
       // Use the joined-record ID so this removes the registration, not the event.
-      const response = await fetch(
+      const response = await fetchCommunityApi(
         getCommunityJoinedEventUrl(joinedRecordId),
         { method: "DELETE" },
       );

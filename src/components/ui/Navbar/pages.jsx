@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ArrowUpRight,
+  CalendarDays,
   HandHeart,
   Menu,
   Moon,
@@ -203,6 +204,20 @@ export function Navbar() {
                       className="size-4 text-[#52735e] dark:text-[#a9c5ad]"
                     />
                     Profile
+                    <ArrowUpRight
+                      aria-hidden="true"
+                      className="ml-auto size-4 opacity-50"
+                    />
+                  </Link>
+                  <Link
+                    href="/manage-events"
+                    className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#365347] transition-colors hover:bg-[#edf2e8] focus-visible:outline-2 focus-visible:outline-[#39765e] dark:text-[#e4eee5] dark:hover:bg-white/5"
+                  >
+                    <CalendarDays
+                      aria-hidden="true"
+                      className="size-4 text-[#52735e] dark:text-[#a9c5ad]"
+                    />
+                    Manage Events
                     <ArrowUpRight
                       aria-hidden="true"
                       className="ml-auto size-4 opacity-50"

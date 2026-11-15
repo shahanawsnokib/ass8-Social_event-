@@ -22,40 +22,6 @@ export default function LoginPage() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isResetRequest, setIsResetRequest] = useState(false);
-
-  async function handlePasswordResetRequest(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!event.currentTarget.reportValidity()) {
-      return;
-    }
-
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email")?.toString().trim() ?? "";
-
-    setIsSubmitting(true);
-    setMessage("");
-
-    try {
-      // Always show the same message so the page does not reveal registered emails.
-      const { error } = await authClient.requestPasswordReset({
-        email,
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) {
-        setMessage(error.message || "Unable to send a reset link. Please try again.");
-        return;
-      }
-
-      setMessage("If an account exists for this email, a reset link will be sent shortly.");
-    } catch {
-      setMessage("Unable to reach the password reset service. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -179,64 +145,17 @@ export default function LoginPage() {
                 <HandHeart aria-hidden="true" className="size-5" />
               </span>
               <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#52735e] dark:text-[#a9c5ad]">
-                {isResetRequest ? "Account help" : "Welcome back"}
+                Welcome back
               </p>
               <h2 className="mt-1.5 text-3xl font-semibold tracking-[-0.055em]">
-                {isResetRequest ? "Reset your password" : "Sign in to Goodturn"}
+                Sign in to Goodturn
               </h2>
               <p className="mt-2 text-sm leading-6 text-[#718078] dark:text-[#aebdb1]">
-                {isResetRequest
-                  ? "We’ll email you a secure link to choose a new password."
-                  : "Your community is glad you’re here."}
+                Your community is glad you’re here.
               </p>
             </div>
 
-            {!isResetRequest && (
-              <div className="grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() =>
-                  setMessage("Google sign-in is not connected in this frontend preview.")
-                }
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#dfe4dc] bg-white text-xs font-semibold text-[#263b31] transition-colors hover:bg-[#f7f8f1] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#54836c] dark:border-white/15 dark:bg-[#1d3029] dark:text-[#eef3ec] dark:hover:bg-[#294336]"
-              >
-                <span aria-hidden="true" className="text-base font-bold text-[#4285f4]">
-                  G
-                </span>
-                Continue with Google
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  setMessage("GitHub sign-in is not connected in this frontend preview.")
-                }
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#dfe4dc] bg-white text-xs font-semibold text-[#263b31] transition-colors hover:bg-[#f7f8f1] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#54836c] dark:border-white/15 dark:bg-[#1d3029] dark:text-[#eef3ec] dark:hover:bg-[#294336]"
-              >
-                <span
-                  aria-hidden="true"
-                  className="flex size-5 items-center justify-center rounded-full bg-[#263b31] text-[8px] font-bold text-white dark:bg-[#eef3ec] dark:text-[#1d3029]"
-                >
-                  GH
-                </span>
-                Continue with GitHub
-              </button>
-              </div>
-            )}
-
-            {!isResetRequest && (
-              <div className="my-6 flex items-center gap-3">
-              <span className="h-px flex-1 bg-[#e6e9e1] dark:bg-white/10" />
-              <span className="text-[10px] font-medium text-[#89958b]">
-                or sign in with email
-              </span>
-              <span className="h-px flex-1 bg-[#e6e9e1] dark:bg-white/10" />
-              </div>
-            )}
-
-            <form
-              onSubmit={isResetRequest ? handlePasswordResetRequest : handleSubmit}
-              className="space-y-4"
-            >
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label
                   htmlFor="email"
@@ -261,25 +180,14 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {!isResetRequest && (
               <div>
-                <div className="mb-1.5 flex items-center justify-between">
+                <div className="mb-1.5">
                   <label
                     htmlFor="password"
                     className="block text-xs font-semibold text-[#37453c] dark:text-[#d8e2d8]"
                   >
                     Password
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsResetRequest(true);
-                      setMessage("");
-                    }}
-                    className="text-xs font-semibold text-[#315d49] underline decoration-[#a8b99c] underline-offset-4 hover:text-[#173c34] dark:text-[#dceeb1] dark:hover:text-white"
-                  >
-                    Forgot password?
-                  </button>
                 </div>
                 <div className="relative">
                   <LockKeyhole
@@ -310,9 +218,7 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
-              )}
 
-              {!isResetRequest && (
               <div className="flex items-center pt-0.5">
                 <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-[#647268] dark:text-[#b6c4b8]">
                   <input
@@ -323,35 +229,19 @@ export default function LoginPage() {
                   Keep me signed in
                 </label>
               </div>
-              )}
 
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#214b38] text-sm font-semibold text-white shadow-[0_8px_18px_-10px_rgba(25,59,50,0.7)] transition-all hover:bg-[#173c34] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f0a36e] active:translate-y-px disabled:cursor-not-allowed disabled:opacity-70 dark:bg-[#dceeb1] dark:text-[#214b38] dark:hover:bg-[#e8f4c8]"
               >
-                {isSubmitting
-                  ? isResetRequest ? "Sending link..." : "Signing in..."
-                  : isResetRequest ? "Send reset link" : "Sign in"}
+                {isSubmitting ? "Signing in..." : "Sign in"}
                 <ArrowRight
                   aria-hidden="true"
                   className="size-4 transition-transform group-hover:translate-x-0.5"
                 />
               </button>
             </form>
-
-            {isResetRequest && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsResetRequest(false);
-                  setMessage("");
-                }}
-                className="mt-4 w-full text-center text-xs font-semibold text-[#315d49] underline decoration-[#a8b99c] underline-offset-4 hover:text-[#173c34] dark:text-[#dceeb1] dark:hover:text-white"
-              >
-                Back to sign in
-              </button>
-            )}
 
             {message && (
               <p

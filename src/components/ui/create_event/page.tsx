@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { getCommunityEventCreateUrl } from "@/lib/community-events";
+import { fetchCommunityApi } from "@/lib/community-api-client";
 
 const labelClassName =
   "mb-0.5 block text-[8px] leading-3 font-medium text-[#37453c] dark:text-[#d8e2d8]";
@@ -23,10 +25,10 @@ const initialFormData: EventFormData = {
   title: "",
   description: "",
   eventType: "Donation",
-  eventDate: "2026-11-21",
+  eventDate: "",
   thumbnailUrl: "",
   location: "",
-  organizerEmail: "ayesha@example.com",
+  organizerEmail: "",
 };
 
 function getLocalDateString() {
@@ -38,9 +40,16 @@ function getLocalDateString() {
   return `${year}-${month}-${day}`;
 }
 
-export default function CreateEventPage() {
-  // This state object always contains the latest values from the form fields.
-  const [formData, setFormData] = useState(initialFormData);
+export default function CreateEventPage({
+  organizerEmail,
+}: {
+  organizerEmail: string;
+}) {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    ...initialFormData,
+    organizerEmail,
+  });
 
   function handleChange(
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -78,7 +87,7 @@ export default function CreateEventPage() {
     }
 
     try {
-      const response = await fetch(getCommunityEventCreateUrl(), {
+      const response = await fetchCommunityApi(getCommunityEventCreateUrl(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,6 +104,8 @@ export default function CreateEventPage() {
         description: "Your event was sent to the server successfully.",
         type: "success",
       });
+      router.push("/events");
+      router.refresh();
     } catch (error) {
       console.error("Could not publish event:", error);
       toast.add({
@@ -106,7 +117,7 @@ export default function CreateEventPage() {
   }
 
   function handleCancel() {
-    setFormData(initialFormData);
+    setFormData({ ...initialFormData, organizerEmail });
   }
 
   return (
@@ -185,6 +196,7 @@ export default function CreateEventPage() {
                   id="event-date"
                   name="eventDate"
                   type="date"
+                  min={getLocalDateString()}
                   value={formData.eventDate}
                   onChange={handleChange}
                   required

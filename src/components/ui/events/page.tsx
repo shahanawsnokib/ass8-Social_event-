@@ -24,7 +24,7 @@ export default function EventsPage({ limit }: EventsPageProps) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const data = await getCommunityEvents();
+        const data = await getCommunityEvents(limit);
         setEvents(data);
       } catch (err) {
         console.error(err);
@@ -35,16 +35,17 @@ export default function EventsPage({ limit }: EventsPageProps) {
     };
 
     fetchEvents();
-  }, []);
+  }, [limit]);
 
 
 
 // sort date 
 
 
-  const sortedEvents = [...events].sort((first, second) =>
-    first.eventDate.localeCompare(second.eventDate),
-  );
+  const today = new Date().toISOString().slice(0, 10);
+  const sortedEvents = events
+    .filter((event) => event.eventDate > today)
+    .sort((first, second) => first.eventDate.localeCompare(second.eventDate));
   const displayedEvents = limit ? sortedEvents.slice(0, limit) : sortedEvents;
 
   return (

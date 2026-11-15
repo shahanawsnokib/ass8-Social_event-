@@ -1,14 +1,11 @@
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, Mail, MapPin } from "lucide-react";
+import { ArrowLeft, MapPin } from "lucide-react";
 import {
   getCommunityEventUrl,
-  getEventDateLabel,
   type CommunityEvent,
 } from "@/lib/community-events";
 import { notFound } from "next/navigation";
-import EditEventDetails from "@/components/ui/editEvenetDetails";
 import EventDetailImage from "@/components/ui/events/event-detail-image";
-import DeleteEventButton from "@/components/ui/delete_event";
 import Join from "../../../components/join/join"
 
 type EventDetailsPageProps = {
@@ -179,12 +176,6 @@ export default async function EventDetailsPage({
               </p>
             </div>
 
-            <div className="relative z-10 my-5 mx-4 flex justify-between">
-              {/* Edit Event */}
-              <EditEventDetails event={event} />
-
-              <DeleteEventButton event={event} />
-            </div>
           </div>
 
           {/* Put the full description beside the quick-reference information. */}

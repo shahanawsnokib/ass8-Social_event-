@@ -10,5 +10,5 @@ export default async function Page() {
     redirect("/login");
   }
 
-  return <CreateEventPage />;
+  return <CreateEventPage organizerEmail={session.user.email} />;
 }

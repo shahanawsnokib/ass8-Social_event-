@@ -16,12 +16,17 @@ export function getCommunityEventUrl(id: string) {
   return `${apiUrl}/events/${encodeURIComponent(id)}`;
 }
 
-export function getCommunityEventsUrl() {
-  return `${apiUrl}/events`;
+export function getCommunityEventsUrl(limit?: number) {
+  const query = limit ? `?limit=${encodeURIComponent(limit)}` : "";
+  return `${apiUrl}/events${query}`;
 }
 
 export function getCommunityEventCreateUrl() {
   return `${apiUrl}/create-event`;
+}
+
+export function getCommunityEventsForUserUrl() {
+  return `${apiUrl}/events/mine`;
 }
 
 // Shared endpoint for checking and submitting event registrations.
@@ -127,24 +132,10 @@ function normalizeJoinedEvent(value: Record<string, unknown>): CommunityEvent | 
   };
 }
 
-export async function getCommunityJoinedEventsForUser(
+export function normalizeCommunityJoinedEvents(
+  payload: unknown,
   email: string,
-): Promise<CommunityEvent[]> {
-  const response = await fetch(getCommunityJoinedEventsUrl(), {
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error(`Could not load joined events (HTTP ${response.status}).`);
-  }
-
-  const contentType = response.headers.get("content-type") ?? "";
-  if (!contentType.toLowerCase().includes("application/json")) {
-    throw new Error("The joined-events endpoint returned a non-JSON response.");
-  }
-
-  const payload: unknown = await response.json();
-
+): CommunityEvent[] {
   return getJoinedRecords(payload)
     .filter((record) => (record.email ?? record.userEmail) === email)
     .map(normalizeJoinedEvent)
@@ -152,8 +143,10 @@ export async function getCommunityJoinedEventsForUser(
     .sort((first, second) => first.eventDate.localeCompare(second.eventDate));
 }
 
-export async function getCommunityEvents(): Promise<CommunityEvent[]> {
-  const response = await fetch(getCommunityEventsUrl());
+export async function getCommunityEvents(
+  limit?: number,
+): Promise<CommunityEvent[]> {
+  const response = await fetch(getCommunityEventsUrl(limit));
 
   if (!response.ok) {
     throw new Error(`Could not load events (HTTP ${response.status}).`);
@@ -166,6 +159,12 @@ export async function getCommunityEvents(): Promise<CommunityEvent[]> {
 
   const payload: unknown = await response.json();
 
+  return normalizeCommunityEvents(payload);
+}
+
+export function normalizeCommunityEvents(
+  payload: unknown,
+): CommunityEvent[] {
   return getEventRecords(payload)
     .map(normalizeEvent)
     .filter((event): event is CommunityEvent => event !== null);

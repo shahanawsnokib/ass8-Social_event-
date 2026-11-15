@@ -62,14 +62,7 @@ export default function SignUpPage() {
 
       if (error) {
         setMessage(error.message || "Unable to create your account. Please try again.");
-        console.log(error);
-        
         return;
-      }
-
-      if(data){
-        console.log(data);
-        
       }
 
       if (!data) {
@@ -157,50 +150,6 @@ export default function SignUpPage() {
                 A few details and you’re ready to do good.
               </p>
             </div>
-
-            <div className="mb-5 grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() =>
-                  setMessage("Google sign-up is not connected in this frontend preview.")
-                }
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#dfe4dc] bg-white text-xs font-semibold text-[#263b31] transition-colors hover:bg-[#f7f8f1] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#54836c] dark:border-white/15 dark:bg-[#1d3029] dark:text-[#eef3ec] dark:hover:bg-[#294336]"
-              >
-                <span aria-hidden="true" className="text-base font-bold text-[#4285f4]">
-                  G
-                </span>
-                Continue with Google
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  setMessage("GitHub sign-up is not connected in this frontend preview.")
-                }
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#dfe4dc] bg-white text-xs font-semibold text-[#263b31] transition-colors hover:bg-[#f7f8f1] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#54836c] dark:border-white/15 dark:bg-[#1d3029] dark:text-[#eef3ec] dark:hover:bg-[#294336]"
-              >
-                <span
-                  aria-hidden="true"
-                  className="flex size-5 items-center justify-center rounded-full bg-[#263b31] text-[8px] font-bold text-white dark:bg-[#eef3ec] dark:text-[#1d3029]"
-                >
-                  GH
-                </span>
-                Continue with GitHub
-              </button>
-            </div>
-
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px flex-1 bg-[#e6e9e1] dark:bg-white/10" />
-              <span className="text-[10px] font-medium text-[#89958b]">
-                or sign up with email
-              </span>
-              <span className="h-px flex-1 bg-[#e6e9e1] dark:bg-white/10" />
-            </div>
-
-
-
-
-
-
 
             <form onSubmit={signUpHandler} className="space-y-3.5">
               <div>

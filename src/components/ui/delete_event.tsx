@@ -17,25 +17,46 @@ import {
   type CommunityEvent,
 } from "@/lib/community-events";
 import { Button } from "./button";
+import { fetchCommunityApi } from "@/lib/community-api-client";
+import { toast } from "@/components/ui/toast";
 
 type DeleteEventProps = {
   event: CommunityEvent;
+  onDeleted?: () => void;
 };
 
-const DeleteEventButton = ({ event }: DeleteEventProps) => {
+const DeleteEventButton = ({ event, onDeleted }: DeleteEventProps) => {
   const id = event.id;
   const router = useRouter();
 
   const handleDelete = async () => {
-    const res = await fetch(getCommunityEventUrl(id), {
-      method: "DELETE",
-    });
+    try {
+      const res = await fetchCommunityApi(getCommunityEventUrl(id), {
+        method: "DELETE",
+      });
 
-    if (!res.ok) {
-      throw new Error(`Delete failed (HTTP ${res.status}).`);
+      if (!res.ok) {
+        throw new Error(`Delete failed (HTTP ${res.status}).`);
+      }
+
+      toast.add({
+        title: "Event deleted",
+        description: "The event has been removed.",
+        type: "success",
+      });
+      if (onDeleted) {
+        onDeleted();
+      } else {
+        router.push("/events");
+      }
+    } catch (error) {
+      console.error("Could not delete event:", error);
+      toast.add({
+        title: "Could not delete event",
+        description: "The server could not delete this event. Please try again.",
+        type: "error",
+      });
     }
-
-    router.push("/events");
   };
 
   return (
