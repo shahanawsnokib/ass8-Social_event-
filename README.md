@@ -43,7 +43,7 @@ The Express API is maintained separately in the `sarver` folder.
    ```
 
 3. Configure the API's `.env` file as described in
-   [the server README](../sarver/README.md). Its `BETTER_AUTH_URL` must match
+   [the server README](../sarver/README.md). Its `CLIENT_URL` must match
    `NEXT_PUBLIC_BASE_URL`.
 4. Start the client with `npm.cmd run dev` and the API with `node index.js`
    from the server folder. Open [http://localhost:3000](http://localhost:3000).
